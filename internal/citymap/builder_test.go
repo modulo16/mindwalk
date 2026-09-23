@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 func TestBuildIsDeterministic(t *testing.T) {
@@ -279,6 +279,32 @@ func TestWorkspaceModeTraceSeedsNonProjectDirs(t *testing.T) {
 		if strings.HasPrefix(file.Path, "notes/") {
 			t.Fatalf("untouched non-project dir mapped: %s", file.Path)
 		}
+	}
+}
+
+func TestBuildAuditCreatesOperationalTopology(t *testing.T) {
+	trace := &model.Trace{
+		Version: 1,
+		Session: model.TraceSession{ID: "audit-synthetic", Harness: "audit-jsonl"},
+		Events: []model.Event{
+			{Targets: []model.Target{{Path: "audit/client/agent/pm-gateway/pm_get_status/ALLOWED"}}},
+			{Targets: []model.Target{{Path: "audit/client/agent/pm-gateway/pm_get_status/ALLOWED"}}},
+			{Targets: []model.Target{{Path: "audit/client/agent/pm-gateway/pm_list_executions/ALLOWED"}}},
+		},
+	}
+
+	city, err := (Builder{}).BuildAudit(trace)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if city.Repo.Root != "audit://audit-synthetic" || city.Layout.Algorithm != "audit-topology-v1" {
+		t.Fatalf("audit metadata = %#v", city)
+	}
+	if len(city.Files) != 2 || len(city.Dirs) == 0 {
+		t.Fatalf("audit topology = files:%d dirs:%d", len(city.Files), len(city.Dirs))
+	}
+	if city.Files[0].Lines != 2 {
+		t.Fatalf("activity weight = %#v", city.Files)
 	}
 }
 

@@ -5,7 +5,7 @@ export interface SessionFilters {
   harness?: string;
 }
 
-const STORAGE_KEY = "mindwalk.sessionFilters";
+const STORAGE_KEY = "cantoptek.sessionFilters";
 
 // activeKey keeps an explicitly opened session visible even when it has no
 // calls; the harness filter is deliberate user intent, so it still applies

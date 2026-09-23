@@ -22,11 +22,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cosmtrek/mindwalk/internal/adapter"
-	"github.com/cosmtrek/mindwalk/internal/adapter/claudecode"
-	"github.com/cosmtrek/mindwalk/internal/adapter/codex"
-	"github.com/cosmtrek/mindwalk/internal/judge"
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/adapter"
+	"github.com/cosmtrek/cantoptek/internal/adapter/claudecode"
+	"github.com/cosmtrek/cantoptek/internal/adapter/codex"
+	"github.com/cosmtrek/cantoptek/internal/judge"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 // timingRunner wraps the real CLI runner and records each sealed call. The

@@ -1,4 +1,4 @@
-# <img src="assets/logo.svg" alt="" width="30" /> mindwalk
+# <img src="assets/logo.svg" alt="" width="30" /> cantoptek
 
 A visualization tool that replays coding-agent sessions on a 3D map of your codebase.
 
@@ -26,32 +26,42 @@ behind your own `claude` or `codex` CLI — see
 ## Quick start
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/cosmtrek/mindwalk/master/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/cosmtrek/cantoptek/master/scripts/install.sh | sh
 export PATH="$HOME/.local/bin:$PATH"
-mindwalk
+cantoptek
 ```
 
 The installer verifies the binary against `checksums.txt` and installs to
 `~/.local/bin` (override with `INSTALL_DIR`; pin a release with `VERSION`).
-Windows archives are on [GitHub Releases](https://github.com/cosmtrek/mindwalk/releases)
-To build from source: `make setup && make build` → `bin/mindwalk`.
+Windows archives are on [GitHub Releases](https://github.com/cosmtrek/cantoptek/releases)
+To build from source: `make setup && make build` → `bin/cantoptek`.
 
 >[!TIP]
->**Nix** users can add mindwalk via [numtide/llm-agents](https://github.com/numtide/llm-agents.nix) flake.
+>**Nix** users can add cantoptek via [numtide/llm-agents](https://github.com/numtide/llm-agents.nix) flake.
 
-With no arguments, mindwalk scans `~/.claude/projects`, `~/.codex/sessions`,
+With no arguments, cantoptek scans `~/.claude/projects`, `~/.codex/sessions`,
 and `~/.pi/agent/sessions`, serves the UI on a random local port, and opens a
-browser:
+browser. Central audit JSONL exports can be browsed from a mounted bucket
+directory with `--audit-dir`:
 
 ```text
-mindwalk serve [--port N] [--no-open] [--claude-dir DIR] [--codex-dir DIR] [--pi-dir DIR]
-mindwalk open [--no-open] <session.jsonl>   open one specific session
-mindwalk map [--no-open] <repo>             open a repository map, no session needed
-mindwalk build <repo> [-o out]              write the repository citymap JSON
-mindwalk trace <session> [-o out]           write the normalized trace JSON
-mindwalk analyze <session> [--judge claude|codex] [--model name] [--no-rubric]
+cantoptek serve [--port N] [--no-open] [--audit-dir DIR] [--claude-dir DIR] [--codex-dir DIR] [--pi-dir DIR]
+cantoptek open [--no-open] [--audit-dir DIR] <session.jsonl>   open one specific audit or agent session
+cantoptek map [--no-open] <repo>             open a repository map, no session needed
+cantoptek build <repo> [-o out]              write the repository citymap JSON
+cantoptek trace <session> [-o out]           write the normalized trace JSON
+cantoptek analyze <session> [--judge claude|codex] [--model name] [--no-rubric]
                                             evaluate one session (see below)
 ```
+
+Audit files are JSONL objects with `ts`, `audit`, `principal`, `tenant`,
+`gateway`, `tool`, `decision`, `detail`, and `request_id` fields. Each valid
+object becomes one ordered audit event; denied, rejected, blocked, failed, and
+error decisions are marked as failures. Audit sessions use a dynamic
+operations map rather than scanning the repository: tenant, principal,
+gateway, tool, and decision form the visible hierarchy, and repeated paths are
+weighted by event count. The adapter ignores malformed or non-audit lines so a
+partially written export remains browseable.
 
 ## Reading the picture
 
@@ -78,7 +88,7 @@ mindwalk analyze <session> [--judge claude|codex] [--model name] [--no-rubric]
   scored against criteria drafted from your own request; session rows carry
   the evaluation state as a quiet badge. See
   [Session evaluation](#session-evaluation).
-- **Repo map** — `mindwalk map <repo>` (or the folder icon in the session
+- **Repo map** — `cantoptek map <repo>` (or the folder icon in the session
   rail) renders any repository's citymap with no session attached; height
   encodes lines of code instead of attention.
 
@@ -92,7 +102,7 @@ Keyboard: `Space` play/pause · `←`/`→` step (`⇧` ×10) · `Home`/`End` en
 
 ## Session evaluation
 
-The evaluate panel (and `mindwalk analyze`) asks a local agent CLI to judge
+The evaluate panel (and `cantoptek analyze`) asks a local agent CLI to judge
 how the session went. A report has two layers:
 
 - **Process dimensions** — exploration, scope, wandering, verification: four
@@ -125,7 +135,7 @@ account. Nothing is sent while viewing sessions, and no other session is
 included. The judge subprocess runs sealed: no tools, no MCP servers, no user
 or project settings, and no session persistence.
 
-Reports are cached in `~/.mindwalk/reports`, one per session; a report goes
+Reports are cached in `~/.cantoptek/reports`, one per session; a report goes
 stale (never auto-reruns) when the session's content changes. Re-evaluating
 a session whose task wording hasn't changed reuses the drafted criteria —
 scores can move, the yardstick doesn't.
@@ -157,7 +167,7 @@ Issues and pull requests are welcome. To get a working dev setup:
 make setup   # install frontend dependencies
 make serve   # dev server on :8765, serving web/dist from the working tree
 make test    # go test + frontend build — run before sending a PR
-make build   # regenerate embedded assets and bin/mindwalk
+make build   # regenerate embedded assets and bin/cantoptek
 ```
 
 Ground rules (see [AGENTS.md](AGENTS.md) for the full architecture notes):
@@ -172,11 +182,11 @@ Ground rules (see [AGENTS.md](AGENTS.md) for the full architecture notes):
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=cosmtrek%2Fmindwalk&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=cosmtrek%2Fcantoptek&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=cosmtrek/mindwalk&type=date&theme=dark&legend=top-left&sealed_token=6ylPq85HVVSbxQtqpYdSNx2EFZXMTk4AhnMG197AQm7TDwfenvf415jqPnPRxRiXz4l_f7NRUM2OlNDptSLXC18Q7cX8CQpUBkJtepMUJg6gYhdNM9fTBqBN08fY19HNfmoCFjN2SThT9w81tO_WWCThVBZtf8tMRUC7Bmi3jJ3HFs-4734aDGFw-LOe" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=cosmtrek/mindwalk&type=date&legend=top-left&sealed_token=6ylPq85HVVSbxQtqpYdSNx2EFZXMTk4AhnMG197AQm7TDwfenvf415jqPnPRxRiXz4l_f7NRUM2OlNDptSLXC18Q7cX8CQpUBkJtepMUJg6gYhdNM9fTBqBN08fY19HNfmoCFjN2SThT9w81tO_WWCThVBZtf8tMRUC7Bmi3jJ3HFs-4734aDGFw-LOe" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=cosmtrek/mindwalk&type=date&legend=top-left&sealed_token=6ylPq85HVVSbxQtqpYdSNx2EFZXMTk4AhnMG197AQm7TDwfenvf415jqPnPRxRiXz4l_f7NRUM2OlNDptSLXC18Q7cX8CQpUBkJtepMUJg6gYhdNM9fTBqBN08fY19HNfmoCFjN2SThT9w81tO_WWCThVBZtf8tMRUC7Bmi3jJ3HFs-4734aDGFw-LOe" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=cosmtrek/cantoptek&type=date&theme=dark&legend=top-left&sealed_token=6ylPq85HVVSbxQtqpYdSNx2EFZXMTk4AhnMG197AQm7TDwfenvf415jqPnPRxRiXz4l_f7NRUM2OlNDptSLXC18Q7cX8CQpUBkJtepMUJg6gYhdNM9fTBqBN08fY19HNfmoCFjN2SThT9w81tO_WWCThVBZtf8tMRUC7Bmi3jJ3HFs-4734aDGFw-LOe" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=cosmtrek/cantoptek&type=date&legend=top-left&sealed_token=6ylPq85HVVSbxQtqpYdSNx2EFZXMTk4AhnMG197AQm7TDwfenvf415jqPnPRxRiXz4l_f7NRUM2OlNDptSLXC18Q7cX8CQpUBkJtepMUJg6gYhdNM9fTBqBN08fY19HNfmoCFjN2SThT9w81tO_WWCThVBZtf8tMRUC7Bmi3jJ3HFs-4734aDGFw-LOe" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=cosmtrek/cantoptek&type=date&legend=top-left&sealed_token=6ylPq85HVVSbxQtqpYdSNx2EFZXMTk4AhnMG197AQm7TDwfenvf415jqPnPRxRiXz4l_f7NRUM2OlNDptSLXC18Q7cX8CQpUBkJtepMUJg6gYhdNM9fTBqBN08fY19HNfmoCFjN2SThT9w81tO_WWCThVBZtf8tMRUC7Bmi3jJ3HFs-4734aDGFw-LOe" />
  </picture>
 </a>
 

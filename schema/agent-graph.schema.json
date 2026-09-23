@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mindwalk.local/schema/agent-graph.schema.json",
-  "title": "mindwalk agent graph",
+  "$id": "https://cantoptek.local/schema/agent-graph.schema.json",
+  "title": "cantoptek agent graph",
   "type": "object",
   "required": ["version", "rootSessionKey", "agents"],
   "properties": {

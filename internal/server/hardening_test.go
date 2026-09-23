@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 func TestHandlerRejectsNonLocalHost(t *testing.T) {

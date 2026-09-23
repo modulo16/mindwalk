@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mindwalk.local/schema/citymap.schema.json",
-  "title": "mindwalk citymap",
+  "$id": "https://cantoptek.local/schema/citymap.schema.json",
+  "title": "cantoptek citymap",
   "type": "object",
   "required": ["version", "repo", "files", "dirs", "layout"],
   "properties": {

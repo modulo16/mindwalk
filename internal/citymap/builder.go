@@ -17,10 +17,58 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 type Builder struct{}
+
+// BuildAudit creates a topology from normalized audit targets rather than
+// reading a repository. Audit adapters encode the operational hierarchy in
+// each target path; repeated paths are weighted by event count.
+func (Builder) BuildAudit(trace *model.Trace) (*model.CityMap, error) {
+	if trace == nil {
+		return nil, errors.New("audit map requires a trace")
+	}
+	counts := map[string]int{}
+	for _, event := range trace.Events {
+		for _, target := range event.Targets {
+			if target.Path != "" {
+				counts[target.Path]++
+			}
+		}
+	}
+	cityFiles := make([]model.CityFile, 0, len(counts))
+	for target, count := range counts {
+		cityFiles = append(cityFiles, model.CityFile{
+			Path:  target,
+			Dir:   filepath.ToSlash(filepath.Dir(target)),
+			Lines: count,
+			Bytes: int64(count),
+			Lang:  "audit",
+		})
+	}
+	sort.Slice(cityFiles, func(i, j int) bool { return cityFiles[i].Path < cityFiles[j].Path })
+	for i := range cityFiles {
+		cityFiles[i].ID = i
+	}
+	root := buildTree(cityFiles)
+	dirs := make([]model.CityDir, 0)
+	layoutNode(root, model.Rect{X: 0, Z: 0, W: 120, D: 120}, &cityFiles, &dirs)
+	return &model.CityMap{
+		Version: 1,
+		Repo: model.RepoMeta{
+			Root:        "audit://" + trace.Session.ID,
+			Dirty:       false,
+			GeneratedAt: time.Now().UTC().Format(time.RFC3339),
+		},
+		Files: cityFiles,
+		Dirs:  dirs,
+		Layout: model.LayoutMeta{
+			Algorithm: "audit-topology-v1",
+			Weight:    "event-count",
+		},
+	}, nil
+}
 
 // Scan limits. Package-level vars so tests can shrink them; production code
 // treats them as constants.

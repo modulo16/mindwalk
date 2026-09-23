@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	baseadapter "github.com/cosmtrek/mindwalk/internal/adapter"
-	"github.com/cosmtrek/mindwalk/internal/model"
+	baseadapter "github.com/cosmtrek/cantoptek/internal/adapter"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 func TestClaudeAgentGraphExactUsesToolUseIDForImmediateParent(t *testing.T) {

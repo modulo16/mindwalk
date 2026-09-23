@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cosmtrek/mindwalk/internal/adapter"
-	"github.com/cosmtrek/mindwalk/internal/model"
-	"github.com/cosmtrek/mindwalk/internal/textutil"
+	"github.com/cosmtrek/cantoptek/internal/adapter"
+	"github.com/cosmtrek/cantoptek/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/textutil"
 )
 
 const (

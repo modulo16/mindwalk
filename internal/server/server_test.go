@@ -13,9 +13,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cosmtrek/mindwalk/internal/adapter"
-	"github.com/cosmtrek/mindwalk/internal/citymap"
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/adapter"
+	"github.com/cosmtrek/cantoptek/internal/citymap"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 func TestTraceStillLoadsWhenSessionCwdIsMissing(t *testing.T) {
@@ -69,6 +69,34 @@ func TestTraceStillLoadsWhenSessionCwdIsMissing(t *testing.T) {
 	}
 	if len(snapshot.Trace.Events) != 1 || snapshot.City.Repo.Root != city.Repo.Root {
 		t.Fatalf("snapshot = %#v", snapshot)
+	}
+}
+
+func TestAuditTraceUsesDynamicOperationalMap(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "audit.jsonl")
+	writeServerJSONL(t, path, map[string]any{
+		"ts":        "2026-08-24T13:22:07Z",
+		"audit":     true,
+		"principal": "agent",
+		"tenant":    "client",
+		"gateway":   "pm-gateway",
+		"tool":      "pm_get_status",
+		"decision":  "ALLOWED",
+	})
+
+	s := New(Config{})
+	trace, city, err := s.loadTraceAndMap(model.SessionMeta{Harness: "audit-jsonl", Path: path})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(trace.Events) != 1 || city.Repo.Root != "audit://audit" {
+		t.Fatalf("audit snapshot = trace:%#v city:%#v", trace, city)
+	}
+	if city.Layout.Algorithm != "audit-topology-v1" || len(city.Files) != 1 {
+		t.Fatalf("audit city = %#v", city)
+	}
+	if city.Files[0].Path != "audit/client/agent/pm-gateway/pm_get_status/ALLOWED" {
+		t.Fatalf("audit city file = %#v", city.Files[0])
 	}
 }
 

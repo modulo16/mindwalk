@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mindwalk.local/schema/trace.schema.json",
-  "title": "mindwalk trace",
+  "$id": "https://cantoptek.local/schema/trace.schema.json",
+  "title": "cantoptek trace",
   "type": "object",
   "required": ["version", "session", "events", "marks", "stats"],
   "properties": {

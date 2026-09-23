@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 func sampleTrace() *model.Trace {

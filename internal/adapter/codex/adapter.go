@@ -11,9 +11,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cosmtrek/mindwalk/internal/adapter"
-	"github.com/cosmtrek/mindwalk/internal/judge"
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/adapter"
+	"github.com/cosmtrek/cantoptek/internal/judge"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 type Adapter struct {
@@ -187,7 +187,7 @@ func (a Adapter) Summarize(path string) (model.SessionMeta, error) {
 		}
 	})
 	if judge.IsWorkDir(meta.Cwd) {
-		// Sessions recorded in the judge workdir are mindwalk's own judge
+		// Sessions recorded in the judge workdir are cantoptek's own judge
 		// runs (codex cannot disable session persistence), not user coding
 		// sessions; auxiliary keeps them out of every listing.
 		meta.Auxiliary = true

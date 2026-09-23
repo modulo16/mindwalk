@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- mindwalk mark: a repository waiting in the dark, and an agent's walk
+  <!-- cantoptek mark: a repository waiting in the dark, and an agent's walk
        lighting it up. Footsteps are warm firefly light; touched nodes glow by
        state (search moss #9fc67b, read moon #b6daf1, edit amber #f1aa57).
        Keep in sync with web/index.html favicon and web/src/ui/LogoMark.tsx. -->

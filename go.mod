@@ -1,4 +1,4 @@
-module github.com/cosmtrek/mindwalk
+module github.com/cosmtrek/cantoptek
 
 go 1.25
 

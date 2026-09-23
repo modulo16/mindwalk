@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 // DefaultTimeout bounds one whole evaluation. Two sealed calls (rubric, then

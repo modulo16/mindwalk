@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-REPO="${REPO:-cosmtrek/mindwalk}"
+REPO="${REPO:-cosmtrek/cantoptek}"
 VERSION="${VERSION:-latest}"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 
@@ -48,7 +48,7 @@ case "$arch" in
     ;;
 esac
 
-archive="mindwalk_${os}_${arch}.tar.gz"
+archive="cantoptek_${os}_${arch}.tar.gz"
 if [ "$VERSION" = "latest" ]; then
   base_url="https://github.com/$REPO/releases/latest/download"
   display_version="latest"
@@ -75,12 +75,12 @@ curl -fsSL "$base_url/checksums.txt" -o "$tmpdir/checksums.txt"
 )
 
 mkdir -p "$INSTALL_DIR"
-mv "$tmpdir/mindwalk" "$INSTALL_DIR/mindwalk"
-chmod +x "$INSTALL_DIR/mindwalk"
+mv "$tmpdir/cantoptek" "$INSTALL_DIR/cantoptek"
+chmod +x "$INSTALL_DIR/cantoptek"
 
-echo "installed mindwalk $display_version to $INSTALL_DIR/mindwalk"
+echo "installed cantoptek $display_version to $INSTALL_DIR/cantoptek"
 case ":$PATH:" in
   *":$INSTALL_DIR:"*) ;;
-  *) echo "add $INSTALL_DIR to PATH before running mindwalk" ;;
+  *) echo "add $INSTALL_DIR to PATH before running cantoptek" ;;
 esac
-echo "run: mindwalk --help"
+echo "run: cantoptek --help"

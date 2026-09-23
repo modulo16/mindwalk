@@ -436,7 +436,7 @@ export default function App() {
         setSeq: setCurrentSeq
       });
       const name = trace?.session.id || exportSessionKey || "session";
-      downloadBlob(blob, `mindwalk-${name}.${extension}`);
+      downloadBlob(blob, `cantoptek-${name}.${extension}`);
     } catch (err) {
       setError(describeError(err, "exporting the video"));
     } finally {
@@ -851,7 +851,7 @@ export default function App() {
               <div className="card">
                 <h2>No sessions found</h2>
                 <p>
-                  mindwalk scans <code>~/.claude/projects</code>, <code>~/.codex/sessions</code>, and{" "}
+                  cantoptek scans <code>~/.claude/projects</code>, <code>~/.codex/sessions</code>, and{" "}
                   <code>~/.pi/agent/sessions</code> for agent traces. Run a session there, then refresh.
                 </p>
               </div>

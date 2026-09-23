@@ -13,8 +13,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/cosmtrek/mindwalk/internal/model"
-	"github.com/cosmtrek/mindwalk/internal/textutil"
+	"github.com/cosmtrek/cantoptek/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/textutil"
 )
 
 type Source interface {

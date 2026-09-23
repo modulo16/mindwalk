@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/cosmtrek/mindwalk/internal/adapter"
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/adapter"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 type Adapter struct {

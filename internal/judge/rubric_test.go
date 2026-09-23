@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 // rubricTrace is sampleTrace with enough task text to clear the

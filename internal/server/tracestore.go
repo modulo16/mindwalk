@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cosmtrek/mindwalk/internal/adapter"
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/adapter"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 // traceStore owns every parsed-session cache behind one lock. It keeps two
@@ -138,7 +138,7 @@ func (ts *traceStore) run(layer map[string]*traceEntry, inflightKey, key string,
 		if r := recover(); r != nil {
 			load.trace, load.city = nil, nil
 			load.err = fmt.Errorf("load session %s: %v", key, r)
-			log.Printf("mindwalk: panic loading session %s: %v\n%s", key, r, debug.Stack())
+			log.Printf("cantoptek: panic loading session %s: %v\n%s", key, r, debug.Stack())
 		}
 		ts.mu.Lock()
 		if load.err == nil {

@@ -1,6 +1,6 @@
 # Dynamic rubric evaluation
 
-When you evaluate a session, mindwalk does not only grade the four fixed
+When you evaluate a session, cantoptek does not only grade the four fixed
 process dimensions. It first asks the judge to derive criteria from your own
 request — what would count as done for *this* task — and then scores the
 session against both. This document explains how that works and why it is
@@ -33,7 +33,7 @@ modes the design must close:
 Evaluation makes up to two sealed judge calls:
 
 ```
-mindwalk analyze / evaluate panel (explicit trigger)
+cantoptek analyze / evaluate panel (explicit trigger)
   ├─ rubric generation   user messages → distinct tasks → criteria per task
   │                      (skipped, reused from cache, or degraded on failure)
   └─ unified scoring     rubric (as data) + evidence document
@@ -82,7 +82,7 @@ runs — scores can move, the yardstick doesn't — and the cost drops back to
 one call. A full two-phase evaluation takes roughly twice a dimensions-only
 pass, one to two minutes on typical sessions.
 
-The rubric lives inside the report JSON in `~/.mindwalk/reports`; there is
+The rubric lives inside the report JSON in `~/.cantoptek/reports`; there is
 no separate rubric store, so a report and its criteria stay atomic.
 
 ## Trust boundaries

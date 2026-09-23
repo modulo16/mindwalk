@@ -8,19 +8,20 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cosmtrek/mindwalk/internal/adapter"
-	"github.com/cosmtrek/mindwalk/internal/adapter/claudecode"
-	"github.com/cosmtrek/mindwalk/internal/adapter/codex"
-	"github.com/cosmtrek/mindwalk/internal/adapter/pi"
-	"github.com/cosmtrek/mindwalk/internal/citymap"
-	"github.com/cosmtrek/mindwalk/internal/judge"
-	"github.com/cosmtrek/mindwalk/internal/model"
-	"github.com/cosmtrek/mindwalk/internal/server"
+	"github.com/cosmtrek/cantoptek/internal/adapter"
+	"github.com/cosmtrek/cantoptek/internal/adapter/auditjsonl"
+	"github.com/cosmtrek/cantoptek/internal/adapter/claudecode"
+	"github.com/cosmtrek/cantoptek/internal/adapter/codex"
+	"github.com/cosmtrek/cantoptek/internal/adapter/pi"
+	"github.com/cosmtrek/cantoptek/internal/citymap"
+	"github.com/cosmtrek/cantoptek/internal/judge"
+	"github.com/cosmtrek/cantoptek/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/server"
 )
 
 func main() {
 	if err := run(os.Args[1:]); err != nil {
-		fmt.Fprintln(os.Stderr, "mindwalk:", err)
+		fmt.Fprintln(os.Stderr, "cantoptek:", err)
 		os.Exit(1)
 	}
 }
@@ -56,12 +57,13 @@ func serve(args []string) error {
 	claudeDir := fs.String("claude-dir", claudecode.DefaultDir(), "Claude Code projects directory")
 	codexDir := fs.String("codex-dir", codex.DefaultDir(), "Codex sessions directory")
 	piDir := fs.String("pi-dir", pi.DefaultDir(), "pi sessions directory")
+	auditDir := fs.String("audit-dir", "", "directory containing central audit JSONL objects")
 	dev := fs.Bool("dev", false, "prefer web/dist from the working tree")
 	noOpen := fs.Bool("no-open", false, "serve without opening a browser")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
-	return server.New(server.Config{Port: *port, ClaudeDir: *claudeDir, CodexDir: *codexDir, PiDir: *piDir, Dev: *dev}).Start(!*noOpen)
+	return server.New(server.Config{Port: *port, ClaudeDir: *claudeDir, CodexDir: *codexDir, PiDir: *piDir, AuditDir: *auditDir, Dev: *dev}).Start(!*noOpen)
 }
 
 func open(args []string) error {
@@ -70,18 +72,19 @@ func open(args []string) error {
 	claudeDir := fs.String("claude-dir", claudecode.DefaultDir(), "Claude Code projects directory")
 	codexDir := fs.String("codex-dir", codex.DefaultDir(), "Codex sessions directory")
 	piDir := fs.String("pi-dir", pi.DefaultDir(), "pi sessions directory")
+	auditDir := fs.String("audit-dir", "", "directory containing central audit JSONL objects")
 	noOpen := fs.Bool("no-open", false, "serve without opening a browser")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 	if fs.NArg() != 1 {
-		return fmt.Errorf("usage: mindwalk open [--no-open] <session.jsonl>")
+		return fmt.Errorf("usage: cantoptek open [--no-open] <session.jsonl>")
 	}
 	session, err := filepath.Abs(fs.Arg(0))
 	if err != nil {
 		return err
 	}
-	return server.New(server.Config{Port: *port, ClaudeDir: *claudeDir, CodexDir: *codexDir, PiDir: *piDir, OpenSession: session}).Start(!*noOpen)
+	return server.New(server.Config{Port: *port, ClaudeDir: *claudeDir, CodexDir: *codexDir, PiDir: *piDir, AuditDir: *auditDir, OpenSession: session}).Start(!*noOpen)
 }
 
 func openMap(args []string) error {
@@ -93,7 +96,7 @@ func openMap(args []string) error {
 		return err
 	}
 	if fs.NArg() != 1 {
-		return fmt.Errorf("usage: mindwalk map [--no-open] <repo>")
+		return fmt.Errorf("usage: cantoptek map [--no-open] <repo>")
 	}
 	repo, err := filepath.Abs(fs.Arg(0))
 	if err != nil {
@@ -108,7 +111,7 @@ func build(args []string) error {
 		return err
 	}
 	if len(positional) != 1 {
-		return fmt.Errorf("usage: mindwalk build <repo> [-o out]")
+		return fmt.Errorf("usage: cantoptek build <repo> [-o out]")
 	}
 	city, err := citymap.Builder{}.Build(positional[0], nil)
 	if err != nil {
@@ -123,7 +126,7 @@ func trace(args []string) error {
 		return err
 	}
 	if len(positional) != 1 {
-		return fmt.Errorf("usage: mindwalk trace <session.jsonl> [-o out]")
+		return fmt.Errorf("usage: cantoptek trace <session.jsonl> [-o out]")
 	}
 	tr, err := parseTrace(positional[0])
 	if err != nil {
@@ -168,7 +171,7 @@ func analyze(args []string) error {
 		args = fs.Args()[1:]
 	}
 	if len(positional) != 1 {
-		return fmt.Errorf("usage: mindwalk analyze <session.jsonl> [-o out] [--judge claude|codex] [--model name] [--no-cache] [--no-rubric]")
+		return fmt.Errorf("usage: cantoptek analyze <session.jsonl> [-o out] [--judge claude|codex] [--model name] [--no-cache] [--no-rubric]")
 	}
 	session, err := filepath.Abs(positional[0])
 	if err != nil {
@@ -194,21 +197,21 @@ func analyze(args []string) error {
 		// re-run rather than silently returned without the layer.
 		if judge.FreshAgainstTrace(cached, tr) && judgeMatches(cached, *judgeCLI, *judgeModel) &&
 			judge.RubricSatisfied(cached) {
-			fmt.Fprintln(os.Stderr, "mindwalk: using cached report (pass --no-cache to re-run)")
+			fmt.Fprintln(os.Stderr, "cantoptek: using cached report (pass --no-cache to re-run)")
 			return writeJSON(*out, cached)
 		}
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), *timeout)
 	defer cancel()
-	fmt.Fprintf(os.Stderr, "mindwalk: judging %d events, this can take a minute or two…\n", tr.Session.EventCount)
+	fmt.Fprintf(os.Stderr, "cantoptek: judging %d events, this can take a minute or two…\n", tr.Session.EventCount)
 	report, err := judge.Analyze(ctx, tr, judge.Options{CLI: *judgeCLI, Model: *judgeModel, NoRubric: *noRubric, CachedReport: cached})
 	if err != nil {
 		return err
 	}
 	if !*noRubric {
 		if err := cache.Store(key, report); err != nil {
-			fmt.Fprintln(os.Stderr, "mindwalk: report cache write failed:", err)
+			fmt.Fprintln(os.Stderr, "cantoptek: report cache write failed:", err)
 		}
 	}
 	return writeJSON(*out, report)
@@ -216,7 +219,7 @@ func analyze(args []string) error {
 
 func parseTrace(path string) (*model.Trace, error) {
 	var lastErr error
-	for _, source := range []adapter.Source{claudecode.Adapter{}, codex.Adapter{}, pi.Adapter{}} {
+	for _, source := range []adapter.Source{auditjsonl.Adapter{}, claudecode.Adapter{}, codex.Adapter{}, pi.Adapter{}} {
 		trace, err := source.Parse(path)
 		if err == nil {
 			return trace, nil
@@ -265,14 +268,14 @@ func writeJSON(out string, v any) error {
 }
 
 func usage() {
-	fmt.Println(`mindwalk
+	fmt.Println(`cantoptek
 
 Usage:
-  mindwalk                        serve on a random local port and open the UI
-  mindwalk serve [--port N] [--no-open] [--claude-dir DIR] [--codex-dir DIR] [--pi-dir DIR]
-  mindwalk open [--no-open] <session.jsonl> open a specific Claude Code, Codex, or pi session
-  mindwalk map [--no-open] <repo>  open the repository citymap with no session
-  mindwalk build <repo> [-o out]  write citymap.json
-  mindwalk trace <session> [-o out] write trace.json
-  mindwalk analyze <session> [-o out] [--judge claude|codex] [--no-cache] [--no-rubric] evaluate a session with a local agent CLI`)
+  cantoptek                        serve on a random local port and open the UI
+	cantoptek serve [--port N] [--no-open] [--audit-dir DIR] [--claude-dir DIR] [--codex-dir DIR] [--pi-dir DIR]
+	cantoptek open [--no-open] [--audit-dir DIR] <session.jsonl> open an audit JSONL or coding-agent session
+  cantoptek map [--no-open] <repo>  open the repository citymap with no session
+  cantoptek build <repo> [-o out]  write citymap.json
+  cantoptek trace <session> [-o out] write trace.json
+  cantoptek analyze <session> [-o out] [--judge claude|codex] [--no-cache] [--no-rubric] evaluate a session with a local agent CLI`)
 }

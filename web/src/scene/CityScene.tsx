@@ -32,8 +32,8 @@ interface CitySceneProps {
 // earned by attention — touch depth × revisits — so mountains grow where the
 // walker lingered. Light is data: only touched terrain gets bright color.
 const colors: Record<Touch | "unvisited" | "ghost" | "selected", THREE.Color> = {
-  unvisited: new THREE.Color("#5b6372"),
-  ghost: new THREE.Color("#404551"),
+  unvisited: new THREE.Color("#354238"),
+  ghost: new THREE.Color("#202a23"),
   ...touchColors
 };
 
@@ -67,10 +67,10 @@ function locHeight(t: number): number {
 // to red for the largest files. Stops are interpolated so the terrain reads as
 // a continuous gradient rather than hard bands.
 const LOC_RAMP: { at: number; color: THREE.Color }[] = [
-  { at: 0.0, color: new THREE.Color("#5b6372") }, // grey (matches unvisited)
-  { at: 0.35, color: new THREE.Color("#e0894f") }, // orange
-  { at: 0.7, color: new THREE.Color("#9a6bd8") }, // purple
-  { at: 1.0, color: new THREE.Color("#e0524f") } // red
+  { at: 0.0, color: new THREE.Color("#354238") }, // gunmetal green
+  { at: 0.35, color: new THREE.Color("#5e8f45") }, // oxidized metal
+  { at: 0.7, color: new THREE.Color("#9dcb4b") }, // charged green
+  { at: 1.0, color: new THREE.Color("#c8ff58") } // gauss flare
 ];
 function locColor(t: number): THREE.Color {
   for (let i = 1; i < LOC_RAMP.length; i++) {

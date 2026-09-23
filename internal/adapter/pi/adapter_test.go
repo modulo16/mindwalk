@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cosmtrek/mindwalk/internal/adapter/claudecode"
-	"github.com/cosmtrek/mindwalk/internal/adapter/codex"
+	"github.com/cosmtrek/cantoptek/internal/adapter/claudecode"
+	"github.com/cosmtrek/cantoptek/internal/adapter/codex"
 )
 
 func writeSession(t *testing.T, lines ...string) string {

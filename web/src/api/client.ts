@@ -13,7 +13,7 @@ async function getJSON<T>(url: string): Promise<T> {
 // failure shapes (server gone vs. server said no) into something actionable
 export function describeError(err: unknown, doing: string): string {
   if (err instanceof TypeError) {
-    return `Can't reach the mindwalk server while ${doing} — is it still running?`;
+    return `Can't reach the cantoptek server while ${doing} — is it still running?`;
   }
   const detail = (err instanceof Error ? err.message : String(err)).trim();
   return detail ? `Couldn't finish ${doing}: ${detail}` : `Couldn't finish ${doing}`;
@@ -67,7 +67,7 @@ export async function startSessionAnalyze(key: string, choice?: JudgeChoice): Pr
 
 // backs the static full-repo map view: the citymap for a repo, with no session
 // or trace attached. Without a repo path the server falls back to its
-// configured RepoRoot (the `mindwalk map <repo>` case).
+// configured RepoRoot (the `cantoptek map <repo>` case).
 export function getRepoMap(repo?: string): Promise<CityMap> {
   const url = repo ? `/api/repomap?repo=${encodeURIComponent(repo)}` : "/api/repomap";
   return getJSON<CityMap>(url);

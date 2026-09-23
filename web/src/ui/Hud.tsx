@@ -297,7 +297,7 @@ function verifyRuns(count: number): string {
 function rereadHint(observability: MetricObservability): string {
   switch (observability) {
     case "unavailable":
-      return "No file reads observed — this session reads files through commands mindwalk could not recognize";
+      return "No file reads observed — this session reads files through commands cantoptek could not recognize";
     case "estimated":
       return "Reads that re-read a file unchanged since its last read — inferred from shell commands, so the rate is approximate";
     default:

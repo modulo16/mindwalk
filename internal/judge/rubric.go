@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 // Rubric shape bounds. The prompt asks for less (4-6 single-task, ≤10 total);

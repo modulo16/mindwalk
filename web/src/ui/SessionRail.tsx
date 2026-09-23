@@ -4,6 +4,7 @@ import { sessionVisible } from "../state/filters";
 import { LogoMark } from "./LogoMark";
 import { toggleRailShortcut } from "./shortcuts";
 import type { SessionMeta } from "../types";
+import necronPortrait from "../assets/necron-overseer.webp";
 
 interface SessionRailProps {
   sessions: SessionMeta[];
@@ -91,7 +92,7 @@ export const SessionRail = memo(function SessionRail({
         <h1 className="wordmark">
           <LogoMark />
           <span>
-            mindwalk<span className="spark">.</span>
+            cantoptek<span className="spark">.</span>
           </span>
         </h1>
         <div className="rail-head-actions">
@@ -176,6 +177,10 @@ export const SessionRail = memo(function SessionRail({
             <PanelLeftClose size={15} />
           </button>
         </div>
+      </div>
+      <div className="rail-portrait" aria-hidden="true">
+        <img src={necronPortrait} alt="" />
+        <span className="rail-portrait-scan" />
       </div>
       <div className="rail-controls">
         <label className="rail-filter">

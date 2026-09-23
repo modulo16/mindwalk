@@ -1,16 +1,16 @@
 ---
 name: verify
-description: Build, launch, and drive the mindwalk web UI end-to-end for verification.
+description: Build, launch, and drive the cantoptek web UI end-to-end for verification.
 ---
 
-# Verifying mindwalk
+# Verifying cantoptek
 
 ## Build & launch
 
 ```sh
 npm --prefix web run build                  # tsc -b && vite build → web/dist
-go build -o bin/mindwalk ./cmd/mindwalk
-bin/mindwalk serve --no-open --dev --port <PORT> # --dev serves web/dist from the working tree
+go build -o bin/cantoptek ./cmd/cantoptek
+bin/cantoptek serve --no-open --dev --port <PORT> # --dev serves web/dist from the working tree
 ```
 
 Gotchas:
@@ -21,8 +21,8 @@ Gotchas:
   server; pick another port and check the log for `bind: address already in use`.
 - Sessions come from `~/.claude/projects`, `~/.codex/sessions`, and
   `~/.pi/agent/sessions` — this machine has real data, no fixtures needed.
-  `testdata/claude-session.jsonl` works via `mindwalk open`.
-- `bin/mindwalk map <repo>` (or the `/?map=1&repo=<path>` URL) serves the
+  `testdata/claude-session.jsonl` works via `cantoptek open`.
+- `bin/cantoptek map <repo>` (or the `/?map=1&repo=<path>` URL) serves the
   static citymap with no session.
 
 ## Drive (headless Chrome + CDP, no npm installs)

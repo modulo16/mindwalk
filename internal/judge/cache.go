@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 // Cache persists reports under one file per session key so re-opening a
@@ -14,14 +14,14 @@ type Cache struct {
 	Dir string
 }
 
-// DefaultCacheDir is ~/.mindwalk/reports — mindwalk's own data directory,
+// DefaultCacheDir is ~/.cantoptek/reports — cantoptek's own data directory,
 // never inside ~/.claude, ~/.codex, or the inspected repository.
 func DefaultCacheDir() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return ""
 	}
-	return filepath.Join(home, ".mindwalk", "reports")
+	return filepath.Join(home, ".cantoptek", "reports")
 }
 
 func (c Cache) path(sessionKey string) string {

@@ -11,7 +11,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cosmtrek/mindwalk/internal/textutil"
+	"github.com/cosmtrek/cantoptek/internal/textutil"
 )
 
 // RunResult carries the judge's raw text plus which model produced it. The
@@ -51,16 +51,16 @@ func DetectCLIs() []string {
 	return clis
 }
 
-// WorkDir returns ~/.mindwalk/judge, the neutral directory judge subprocesses
+// WorkDir returns ~/.cantoptek/judge, the neutral directory judge subprocesses
 // run in. It holds no repository and no project instructions, and adapters use
-// IsWorkDir to recognize sessions recorded there as mindwalk's own judge runs
+// IsWorkDir to recognize sessions recorded there as cantoptek's own judge runs
 // (a fallback for codex CLIs that predate --ephemeral).
 func WorkDir() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return ""
 	}
-	return filepath.Join(home, ".mindwalk", "judge")
+	return filepath.Join(home, ".cantoptek", "judge")
 }
 
 // IsWorkDir reports whether path is the judge working directory.
@@ -85,7 +85,7 @@ func ensureWorkDir() (string, error) {
 // The trace under evaluation is untrusted input (a prompt injection in the
 // evaluated session must not reach tools), so the judge runs sealed: no
 // tools, no MCP servers, no user or project settings, and nothing the judge
-// produces may surface as a session for mindwalk itself to scan.
+// produces may surface as a session for cantoptek itself to scan.
 type CLIRunner struct {
 	CLI string
 	// Model overrides the CLI's default model when set (an alias like
@@ -107,7 +107,7 @@ func (r CLIRunner) Run(ctx context.Context, prompt, input string) (RunResult, er
 		// modelUsage names the model that actually answered; see
 		// parseClaudeEnvelope.
 		args := []string{"-p",
-			"--no-session-persistence", // never a session file for mindwalk to re-scan
+			"--no-session-persistence", // never a session file for cantoptek to re-scan
 			"--tools", "",
 			"--strict-mcp-config",   // with no --mcp-config: zero MCP servers
 			"--setting-sources", "", // no user/project settings, hooks, or allowlists
@@ -172,7 +172,7 @@ func truncateFailureDetail(detail string) string {
 
 func codexExecArgs(workdir string) []string {
 	return []string{"exec",
-		"--ephemeral",          // no session file for mindwalk to re-scan
+		"--ephemeral",          // no session file for cantoptek to re-scan
 		"--ignore-user-config", // no user MCP servers or profiles; auth stays
 		"--ignore-rules",       // no user/project execpolicy rules
 		"--disable", "shell_tool",
@@ -197,7 +197,7 @@ func codexExecArgs(workdir string) []string {
 }
 
 // claudeEnvelope mirrors the parts of `claude -p --output-format json` output
-// mindwalk needs: the reply text and per-model usage.
+// cantoptek needs: the reply text and per-model usage.
 type claudeEnvelope struct {
 	Result     string `json:"result"`
 	ModelUsage map[string]struct {

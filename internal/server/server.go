@@ -22,13 +22,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cosmtrek/mindwalk/internal/adapter"
-	"github.com/cosmtrek/mindwalk/internal/adapter/claudecode"
-	"github.com/cosmtrek/mindwalk/internal/adapter/codex"
-	"github.com/cosmtrek/mindwalk/internal/adapter/pi"
-	"github.com/cosmtrek/mindwalk/internal/citymap"
-	"github.com/cosmtrek/mindwalk/internal/judge"
-	"github.com/cosmtrek/mindwalk/internal/model"
+	"github.com/cosmtrek/cantoptek/internal/adapter"
+	"github.com/cosmtrek/cantoptek/internal/adapter/auditjsonl"
+	"github.com/cosmtrek/cantoptek/internal/adapter/claudecode"
+	"github.com/cosmtrek/cantoptek/internal/adapter/codex"
+	"github.com/cosmtrek/cantoptek/internal/adapter/pi"
+	"github.com/cosmtrek/cantoptek/internal/citymap"
+	"github.com/cosmtrek/cantoptek/internal/judge"
+	"github.com/cosmtrek/cantoptek/internal/model"
 )
 
 //go:embed static
@@ -39,6 +40,7 @@ type Config struct {
 	ClaudeDir   string
 	CodexDir    string
 	PiDir       string
+	AuditDir    string
 	OpenSession string
 	Dev         bool
 	RepoRoot    string
@@ -120,7 +122,7 @@ const (
 func New(cfg Config) *Server {
 	s := &Server{
 		cfg:             cfg,
-		adapters:        []adapter.Source{claudecode.Adapter{Dir: cfg.ClaudeDir}, codex.Adapter{Dir: cfg.CodexDir}, pi.Adapter{Dir: cfg.PiDir}},
+		adapters:        []adapter.Source{auditjsonl.Adapter{Dir: cfg.AuditDir}, claudecode.Adapter{Dir: cfg.ClaudeDir}, codex.Adapter{Dir: cfg.CodexDir}, pi.Adapter{Dir: cfg.PiDir}},
 		agentGraphs:     map[string]agentGraphCacheEntry{},
 		agentGraphLoads: map[string]*inflightAgentGraph{},
 		summaries:       map[string]summaryCacheEntry{},
@@ -163,7 +165,7 @@ func (s *Server) Start(openBrowser bool) error {
 		}
 		_ = openURL(pageURL)
 	}
-	fmt.Printf("mindwalk serving %s\n", addr)
+	fmt.Printf("cantoptek serving %s\n", addr)
 	return http.Serve(ln, s.handler())
 }
 
@@ -401,7 +403,7 @@ func (s *Server) handleSessionAgentTrace(w http.ResponseWriter, r *http.Request,
 }
 
 // handleRepoMap serves the citymap for a repo with no session / trace attached.
-// It backs the static full-repo map view (mindwalk map <repo> and the ?map=1 UI
+// It backs the static full-repo map view (cantoptek map <repo> and the ?map=1 UI
 // mode). The repo path comes from the ?repo= query param, falling back to the
 // server's configured RepoRoot. Maps are cached per path with a short TTL so a
 // long-running serve picks up tree changes, and the cache is size-bounded.
@@ -817,7 +819,7 @@ func (s *Server) runAgentGraphInflight(key string, load *inflightAgentGraph, sou
 		if r := recover(); r != nil {
 			load.graph = nil
 			load.err = fmt.Errorf("build agent graph %s: %v", key, r)
-			log.Printf("mindwalk: panic building agent graph %s: %v\n%s", key, r, debug.Stack())
+			log.Printf("cantoptek: panic building agent graph %s: %v\n%s", key, r, debug.Stack())
 		}
 		s.mu.Lock()
 		if load.err == nil {
@@ -867,6 +869,15 @@ func (s *Server) loadTraceAndMap(meta model.SessionMeta) (*model.Trace, *model.C
 	if err != nil {
 		return nil, nil, err
 	}
+	if meta.Harness == "audit-jsonl" {
+		city, err := s.buildAuditMap(trace)
+		if err != nil {
+			return nil, nil, err
+		}
+		assignFileIDs(trace, city)
+		trace.Stats = model.ComputeStats(trace, repoFileCount(city), trace.Stats.Observability.Errors)
+		return trace, city, nil
+	}
 	repoRoot := trace.Session.Cwd
 	if repoRoot == "" {
 		repoRoot = meta.Cwd
@@ -879,7 +890,7 @@ func (s *Server) loadTraceAndMap(meta model.SessionMeta) (*model.Trace, *model.C
 	}
 	city, err := s.buildCityMap(repoRoot, trace)
 	if err != nil {
-		log.Printf("mindwalk: citymap build failed for %s: %v; serving empty map", repoRoot, err)
+		log.Printf("cantoptek: citymap build failed for %s: %v; serving empty map", repoRoot, err)
 		city = emptyCityMap(repoRoot)
 	} else {
 		assignFileIDs(trace, city)
@@ -888,6 +899,10 @@ func (s *Server) loadTraceAndMap(meta model.SessionMeta) (*model.Trace, *model.C
 	// grade for its error signal — the recount cannot re-derive it.
 	trace.Stats = model.ComputeStats(trace, repoFileCount(city), trace.Stats.Observability.Errors)
 	return trace, city, nil
+}
+
+func (s *Server) buildAuditMap(trace *model.Trace) (*model.CityMap, error) {
+	return citymap.Builder{}.BuildAudit(trace)
 }
 
 func (s *Server) parseSessionTrace(meta model.SessionMeta) (*model.Trace, error) {

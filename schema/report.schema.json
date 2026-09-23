@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mindwalk.local/schema/report.schema.json",
-  "title": "mindwalk report",
+  "$id": "https://cantoptek.local/schema/report.schema.json",
+  "title": "cantoptek report",
   "description": "LLM-assisted evaluation of one session trace. Findings come from the judge; dimension verdicts are derived mechanically from finding severities so reports stay comparable across runs.",
   "type": "object",
   "required": ["version", "session", "judge", "taskSummary", "dimensions", "narrative"],
